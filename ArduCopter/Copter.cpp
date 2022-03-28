@@ -90,6 +90,7 @@ const AP_HAL::HAL& hal = AP_HAL::get_HAL();
   and the maximum time they are expected to take (in microseconds)
  */
 const AP_Scheduler::Task Copter::scheduler_tasks[] = {
+    SCHED_TASK(mav_send_throw_msg,  1200,   1500),
     SCHED_TASK(rc_loop,              100,    130),
     SCHED_TASK(throttle_loop,         50,     75),
     SCHED_TASK_CLASS(AP_GPS, &copter.gps, update, 50, 200),
@@ -697,6 +698,62 @@ bool Copter::get_wp_crosstrack_error_m(float &xtrack_error) const
     // see GCS_MAVLINK_Copter::send_nav_controller_output()
     xtrack_error = flightmode->crosstrack_error() * 0.01;
     return true;
+}
+
+uint8_t Copter::uart_read(uint8_t *data, uint16_t len)
+{
+    uint16_t i=hal.serial(1)->read(data,len);
+    if(i!=0) {
+        return i;
+    }
+    return 0;
+}
+
+//analysis mavlink_msg
+void Copter::mavlink_receive_handler(mavlink_message_t MavlinkMsg)
+{
+    uint8_t  t[16];
+    uint8_t  SYS_ID=1,COM_ID=1;
+    uint8_t  throw_number,throw_remain;
+
+    /* MSG_ID: MAVLINK_MSG_ID_DATA16    verify message id*/ 
+    if(MAVLINK_MSG_ID_DATA16 == MavlinkMsg.msgid) {                                     
+        if((MavlinkMsg.sysid==SYS_ID)&&(MavlinkMsg.compid==COM_ID)) { //verify system id and compent id
+            mavlink_msg_data16_get_data(&MavlinkMsg,t);
+            throw_number = t[0];
+            throw_remain = t[1];
+
+            // hal.serial(0)->printf("out=%d, leave=%d\n\r", throw_number, throw_remain); /* text print out by printf for test*/
+            gcs().send_text(MAV_SEVERITY_CRITICAL, "throw=%d, leave=%d\r\n",throw_number,throw_remain);
+        }
+    }
+}
+
+void Copter::mav_send_throw_msg(void)
+{
+    hal.serial(1)->begin(115200);
+    uint8_t i,t,ret;
+    static mavlink_message_t msg;
+    static mavlink_status_t  status;
+    static uint8_t uart_rx_data[36]; //max is 30(14+16)
+    static uint16_t uart_rx_len=36;
+
+    // gcs().send_text(MAV_SEVERITY_CRITICAL, "loop begin! %5.3f", (double)3.142f);
+    i=uart_read(uart_rx_data,uart_rx_len); //max length is 14+16=30
+    if(i!=0) {
+        for(t=0;t<i;t++) //byte by byte analysis
+        {
+            // hal.serial(0)->printf("%c",uart_rx_data[t]); //output 30 bytes for observation
+            ret=mavlink_parse_char(MAVLINK_COMM_3, uart_rx_data[t], &msg, &status);
+            if(ret==MAVLINK_FRAMING_OK)
+            {
+                if(MAVLINK_MSG_ID_DATA16 == msg.msgid) /* MSG_ID: MAVLINK_MSG_ID_DATA16    verify message id*/
+                {
+                    mavlink_receive_handler(msg); //send function
+                }
+            }
+        }
+    }
 }
 
 /*
