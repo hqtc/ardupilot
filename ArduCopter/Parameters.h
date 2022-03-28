@@ -161,7 +161,7 @@ public:
         k_param_single_servo_2,         // remove
         k_param_single_servo_3,         // remove
         k_param_single_servo_4,         // 78 - remove
-
+        k_param_rc_feel_y,              //add by routen'nihil
         //
         // 80: Heli
         //

@@ -1288,6 +1288,12 @@ void Copter::convert_pid_parameters(void)
     if (AP_Param::find_old_parameter(&rc_feel_rp_conversion_info, &rc_feel_rp_old)) {
         AP_Param::set_default_by_name(rc_feel_rp_conversion_info.new_name, (1.0f / (2.0f + rc_feel_rp_old.get() * 0.1f)));
     }
+    // convert RC_FEEL_RP to ATC_INPUT_TC_2
+    const AP_Param::ConversionInfo rc_feel_y_conversion_info = { Parameters::k_param_rc_feel_y, 0, AP_PARAM_INT8, "ATC_INPUT_TC_2" };
+    AP_Int8 rc_feel_y_old;
+    if (AP_Param::find_old_parameter(&rc_feel_y_conversion_info, &rc_feel_y_old)) {
+        AP_Param::set_default_by_name(rc_feel_y_conversion_info.new_name, (1.0f / (2.0f + rc_feel_y_old.get() * 0.1f)));
+    }
     // convert loiter parameters
     for (const auto &info : loiter_conversion_info) {
         AP_Param::convert_old_parameter(&info, 1.0f);
