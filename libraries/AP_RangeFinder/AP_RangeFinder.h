@@ -89,6 +89,7 @@ public:
         MSP = 32,
         USD1_CAN = 33,
         Benewake_CAN = 34,
+        UAVR21_CAN = 35,
         SITL = 100,
     };
 
