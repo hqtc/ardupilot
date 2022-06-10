@@ -62,6 +62,7 @@ public:
         Driver_Type_KDECAN = 8,
         Driver_Type_MPPT_PacketDigital = 9,
         Driver_Type_Benewake = 11,
+        Driver_Type_UAVR21 = 12,
     };
 
     void init(void);
