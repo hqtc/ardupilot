@@ -700,9 +700,9 @@ bool Copter::get_wp_crosstrack_error_m(float &xtrack_error) const
     return true;
 }
 
-uint8_t Copter::uart_read(uint8_t *data, uint16_t len)
+uint8_t Copter::uart2_read(uint8_t *data, uint16_t len)
 {
-    uint16_t i=hal.serial(1)->read(data,len);
+    uint16_t i=hal.serial(2)->read(data,len);
     if(i!=0) {
         return i;
     }
@@ -739,7 +739,7 @@ void Copter::mav_send_throw_msg(void)
     static uint16_t uart_rx_len=36;
 
     // gcs().send_text(MAV_SEVERITY_CRITICAL, "loop begin! %5.3f", (double)3.142f);
-    i=uart_read(uart_rx_data,uart_rx_len); //max length is 14+16=30
+    i=uart2_read(uart_rx_data,uart_rx_len); //max length is 14+16=30
     if(i!=0) {
         for(t=0;t<i;t++) //byte by byte analysis
         {
