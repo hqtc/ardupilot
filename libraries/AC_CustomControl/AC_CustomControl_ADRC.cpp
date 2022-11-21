@@ -22,54 +22,61 @@ const AP_Param::GroupInfo AC_CustomControl_ADRC::var_info[] = {
     // @DisplayName: ADRC alpha01
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("ALPHA01", 3, AC_CustomControl_ADRC, alpha01, 0.00f),
+    AP_GROUPINFO("ALPHA01", 3, AC_CustomControl_ADRC, alpha01, 0.50f),
 
     // @Param: ALPHA02
     // @DisplayName: ADRC alpha02
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("ALPHA02", 4, AC_CustomControl_ADRC, alpha02, 0.00f),
+    AP_GROUPINFO("ALPHA02", 4, AC_CustomControl_ADRC, alpha02, 0.25f),
 
     // @Param: DELTA
     // @DisplayName: ADRC delta
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("DELTA", 5, AC_CustomControl_ADRC, delta, 0.00f),
+    AP_GROUPINFO("DELTA", 5, AC_CustomControl_ADRC, delta, 1.0f),
 
     // @Param: WO
     // @DisplayName: ADRC wo
     // @Description: ESO parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("WO", 6, AC_CustomControl_ADRC, wo, 0.00f),
+    AP_GROUPINFO("WO", 6, AC_CustomControl_ADRC, wo, 15.00f),
 
     // @Param: WC
     // @DisplayName: ADRC wc
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("WC", 7, AC_CustomControl_ADRC, wc, 0.00f),
+    AP_GROUPINFO("WC", 7, AC_CustomControl_ADRC, wc, 10.00f),
 
     // @Param: B0
     // @DisplayName: ADRC b0
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("B0", 8, AC_CustomControl_ADRC, b0, 0.00f),
+    AP_GROUPINFO("B0", 8, AC_CustomControl_ADRC, b0, 10.00f),
+
+    // @Param: H
+    // @DisplayName: ADRC h
+    // @Description: ADRC parameter for ADRC custom controller backend
+    // @User: Advanced
+    AP_GROUPINFO("H", 9, AC_CustomControl_ADRC, h, 0.0025f),
 
     AP_GROUPEND
 };
 
 // initialize in the constructor
 AC_CustomControl_ADRC::AC_CustomControl_ADRC(AC_CustomControl& frontend, AP_AHRS_View*& ahrs, AC_AttitudeControl_Multi*& att_control, AP_MotorsMulticopter*& motors, float dt) :
-    AC_CustomControl_Backend(frontend, ahrs, att_control, motors, dt),
-    r(10.00f),
-    h0(0.01f),
-    alpha01(0.00f),
-    alpha02(0.00f),
-    delta(0.00f),
-    wo(0.00f),
-    wc(0.00f),
-    b0(0.00f)
+    AC_CustomControl_Backend(frontend, ahrs, att_control, motors, dt)
 {
     AP_Param::setup_object_defaults(this, var_info);
+    r.set_and_default(10.00f);
+    h0.set_and_default(0.01f);
+    alpha01.set_and_default(0.50f);
+    alpha02.set_and_default(0.25f);
+    delta.set_and_default(1.00f);
+    wo.set_and_default(15.00f);
+    wc.set_and_default(10.00f);
+    b0.set_and_default(10.00f);
+    h.set_and_default(0.0025f);
 }
 
 // update controller
@@ -110,9 +117,9 @@ Vector3f AC_CustomControl_ADRC::update(void)
 
     // run attitude controller
     Vector3f target_rate;
-    // target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0];
-    // target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1];
-    // target_rate[2] = _p_angle_yaw2.kP() * attitude_error.z + ang_vel_body_feedforward[2];
+    target_rate[0] = 2 * wc * attitude_error.x + ang_vel_body_feedforward[0];
+    target_rate[1] = 2 * wc * attitude_error.y + ang_vel_body_feedforward[1];
+    target_rate[2] = 2 * wc * attitude_error.z + ang_vel_body_feedforward[2];
 
     // run rate controller
     Vector3f gyro_latest = _ahrs->get_gyro_latest();
@@ -137,8 +144,8 @@ float AC_CustomControl_ADRC::adrc_update(float v, float y)
 {
     // ------定义参数------
     // TD跟踪微分器
-    float v1;
-    float v2;
+    float v1 = 0;
+    float v2 = 0;
 
     // ESO观测器
     float beta01 = 3 * wo;
@@ -152,7 +159,6 @@ float AC_CustomControl_ADRC::adrc_update(float v, float y)
     float u0 = 0;           // u0:误差反馈控制量
 
     // ADRC控制器
-    float h = 0.1;          // h:积分步长
     float e1 = 0, e2 = 0;   // e1,e2:误差
     float u  = 0;
 
@@ -212,10 +218,10 @@ float AC_CustomControl_ADRC::sign(float e)
 {
     if(e > 0) {
         return 1;
-    } else if(e == 0) {
-        return 0;
-    } else {
+    } else if(e < 0) {
         return -1;
+    } else {
+        return 0;
     }
 }
 

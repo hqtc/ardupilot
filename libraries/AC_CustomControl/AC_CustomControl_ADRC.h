@@ -42,6 +42,7 @@ protected:
     // ADRC
     AP_Float wc;
     AP_Float b0;
+    AP_Float h;     // time step
 };
 
 #endif
