@@ -9,62 +9,92 @@ const AP_Param::GroupInfo AC_ADRC::var_info[] = {
     // @DisplayName: ADRC r
     // @Description: TD parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("R", 1, AC_ADRC, r, 5.00f),
+    AP_GROUPINFO("R", 1, AC_ADRC, r, 100.00f),
 
     // @Param: H0
     // @DisplayName: ADRC h0
     // @Description: TD parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("H0", 2, AC_ADRC, h0, 0.025f),
+    AP_GROUPINFO("H0", 2, AC_ADRC, h0, 0.0125f),
 
     // @Param: ALPHA01
     // @DisplayName: ADRC alpha01
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("ALPHA01", 3, AC_ADRC, alpha01, 0.75f),
+    AP_GROUPINFO("ALPHA01", 3, AC_ADRC, alpha01, 0.5f),
 
     // @Param: ALPHA02
     // @DisplayName: ADRC alpha02
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("ALPHA02", 4, AC_ADRC, alpha02, 1.50f),
+    AP_GROUPINFO("ALPHA02", 4, AC_ADRC, alpha02, 0.25f),
 
     // @Param: DELTA
     // @DisplayName: ADRC delta
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("DELTA", 5, AC_ADRC, delta, 0.0125f),
+    AP_GROUPINFO("DELTA", 5, AC_ADRC, delta, 0.0025f),
 
-    // @Param: WO
-    // @DisplayName: ADRC wo
+    // // @Param: WO
+    // // @DisplayName: ADRC wo
+    // // @Description: ESO parameter for ADRC custom controller backend
+    // // @User: Advanced
+    // AP_GROUPINFO("WO", 6, AC_ADRC, wo, 10.00f),
+
+    // // @Param: WC
+    // // @DisplayName: ADRC wc
+    // // @Description: ADRC parameter for ADRC custom controller backend
+    // // @User: Advanced
+    // AP_GROUPINFO("WC", 7, AC_ADRC, wc, 0.10f),
+
+    // @Param: BETA01
+    // @DisplayName: ADRC beta01
     // @Description: ESO parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("WO", 6, AC_ADRC, wo, 10.00f),
+    AP_GROUPINFO("BETA01", 6, AC_ADRC, beta01, 10.00f),
 
-    // @Param: WC
-    // @DisplayName: ADRC wc
+    // @Param: BETA02
+    // @DisplayName: ADRC beta02
+    // @Description: ESO parameter for ADRC custom controller backend
+    // @User: Advanced
+    AP_GROUPINFO("BETA02", 7, AC_ADRC, beta02, 200.00f),
+
+    // @Param: BETA03
+    // @DisplayName: ADRC beta03
+    // @Description: ESO parameter for ADRC custom controller backend
+    // @User: Advanced
+    AP_GROUPINFO("BETA03", 8, AC_ADRC, beta03, 30.00f),
+
+    // @Param: KP
+    // @DisplayName: ADRC kp
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("WC", 7, AC_ADRC, wc, 0.10f),
+    AP_GROUPINFO("KP", 9, AC_ADRC, kp, 10.00f),
+
+    // @Param: KD
+    // @DisplayName: ADRC kd
+    // @Description: ADRC parameter for ADRC custom controller backend
+    // @User: Advanced
+    AP_GROUPINFO("KD", 10, AC_ADRC, kd, 200.00f),
 
     // @Param: B0
     // @DisplayName: ADRC b0
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("B0", 8, AC_ADRC, b0, 0.20f),
+    AP_GROUPINFO("B0", 11, AC_ADRC, b0, 0.20f),
 
-    // @Param: H
-    // @DisplayName: ADRC h
-    // @Description: ADRC parameter for ADRC custom controller backend
-    // @User: Advanced
-    AP_GROUPINFO("H", 9, AC_ADRC, h, 0.0025f),
+    // // @Param: H
+    // // @DisplayName: ADRC h
+    // // @Description: ADRC parameter for ADRC custom controller backend
+    // // @User: Advanced
+    // AP_GROUPINFO("H", 12, AC_ADRC, h, 0.0025f),
 
     AP_GROUPEND
 };
 
 // Constructor
-AC_ADRC::AC_ADRC(float initial_r, float initial_h0, float initial_alpha01, float initial_alpha02, float initial_delta, float initial_wo,
-    float initial_wc, float initial_b0, float initial_h)
+AC_ADRC::AC_ADRC(float initial_r, float initial_h0, float initial_alpha01, float initial_alpha02, float initial_delta, float initial_beta01, float initial_beta02, float initial_beta03,
+    float initial_kp, float initial_kd, float initial_b0, float dt)
 {
     // load parameter values from eeprom
     AP_Param::setup_object_defaults(this, var_info);
@@ -73,24 +103,13 @@ AC_ADRC::AC_ADRC(float initial_r, float initial_h0, float initial_alpha01, float
     alpha01.set_and_default(initial_alpha01);
     alpha02.set_and_default(initial_alpha02);
     delta.set_and_default(initial_delta);
-    wo.set_and_default(initial_wo);
-    wc.set_and_default(initial_wc);
+    beta01.set_and_default(initial_beta01);
+    beta02.set_and_default(initial_beta02);
+    beta03.set_and_default(initial_beta03);
+    kp.set_and_default(initial_kp);
+    kd.set_and_default(initial_kd);
     b0.set_and_default(initial_b0);
-    h.set_and_default(initial_h);
-}
-
-/// Overload the function call operator to permit easy initialisation
-void AC_ADRC::operator()(float r_val, float h0_val, float alpha01_val, float alpha02_val, float delta_val, float wo_val, float wc_val, float b0_val, float h_val)
-{
-    r.set(r_val);
-    h0.set(h0_val);
-    alpha01.set(alpha01_val);
-    alpha02.set(alpha02_val);
-    delta.set(delta_val);
-    wo.set(wo_val);
-    wc.set(wc_val);
-    b0.set(b0_val);
-    h.set(h_val);
+    h = dt;
 }
 
 // v:设定值    y:输出值   返回值u:控制量
@@ -110,7 +129,7 @@ float AC_ADRC::update_all(float v, float y)
     // NLSEF和ADRC->计算误差反馈控制量u0和控制量u
     e1 = v1 - z1;
     e2 = v2 - z2;
-    u0 = kp * fal(e1, alpha01, delta) + kd * fal(e2, alpha02, delta);   // NLSEF
+    u0 = kp * fal(e1, 0.7, delta) + kd * fal(e2, 1, delta);   // NLSEF
     u = u0 - (z3 / b0);
 
     return u;
