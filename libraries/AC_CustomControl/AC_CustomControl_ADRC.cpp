@@ -27,9 +27,9 @@ const AP_Param::GroupInfo AC_CustomControl_ADRC::var_info[] = {
 // initialize in the constructor
 AC_CustomControl_ADRC::AC_CustomControl_ADRC(AC_CustomControl& frontend, AP_AHRS_View*& ahrs, AC_AttitudeControl_Multi*& att_control, AP_MotorsMulticopter*& motors, float dt) :
     AC_CustomControl_Backend(frontend, ahrs, att_control, motors, dt),
-    _adrc_rate_roll(5.00f, 0.025f, 0.75f, 1.50f, 0.0125f, 10.00f, 0.10f, 0.20f, 0.0025f),
-    _adrc_rate_pitch(5.00f, 0.025f, 0.75f, 1.50f, 0.0125f, 10.00f, 0.10f, 0.20f, 0.0025f),
-    _adrc_rate_yaw(5.00f, 0.025f, 0.75f, 1.50f, 0.0125f, 10.00f, 0.10f, 0.20f, 0.0025f)
+    _adrc_rate_roll(100.00f, 0.0125f, 0.5f, 0.25f, 0.0025f, 10.00f, 200.00f, 30.00f, 10.00f, 200.00f, 0.20f, dt),
+    _adrc_rate_pitch(100.00f, 0.0125f, 0.5f, 0.25f, 0.0025f, 10.00f, 200.00f, 30.00f, 10.00f, 200.00f, 0.20f, dt),
+    _adrc_rate_yaw(100.00f, 0.0125f, 0.5f, 0.25f, 0.0025f, 10.00f, 200.00f, 30.00f, 10.00f, 200.00f, 0.20f, dt)
 {
     AP_Param::setup_object_defaults(this, var_info);
 }
@@ -62,7 +62,7 @@ Vector3f AC_CustomControl_ADRC::update(void)
     motor_out.x = _adrc_rate_roll.update_all(rate_target.x, gyro_latest.x);
     motor_out.y = _adrc_rate_pitch.update_all(rate_target.y, gyro_latest.y);
     motor_out.z = _adrc_rate_yaw.update_all(rate_target.z, gyro_latest.z);
- 
+
     // gcs().send_text(MAV_SEVERITY_INFO, "ADRC custom controller working");
 
     return motor_out;
