@@ -9,17 +9,17 @@ const AP_Param::GroupInfo AC_CustomControl_ADRC::var_info[] = {
     // @Param: RAT_RLL_LM
     // @DisplayName: ADRC roll axis control output limit
     // @User: Advanced
-    AP_SUBGROUPINFO(_adrc_rate_roll, "RAT_RLL_", 1, AC_CustomControl_ADRC, AC_ADRC),
+    AP_SUBGROUPINFO(_adrc_rate_roll, "RAT_R_", 1, AC_CustomControl_ADRC, AC_ADRC),
 
     // @Param: RAT_PIT_LM
     // @DisplayName: ADRC pitch axis control output limit
     // @User: Advanced
-    AP_SUBGROUPINFO(_adrc_rate_pitch, "RAT_PITCH_", 2, AC_CustomControl_ADRC, AC_ADRC),
+    AP_SUBGROUPINFO(_adrc_rate_pitch, "RAT_P_", 2, AC_CustomControl_ADRC, AC_ADRC),
 
     // @Param: RAT_YAW_LM
     // @DisplayName: ADRC yaw axis control output limit
     // @User: Advanced
-    AP_SUBGROUPINFO(_adrc_rate_yaw, "RAT_YAW_", 3, AC_CustomControl_ADRC, AC_ADRC),
+    AP_SUBGROUPINFO(_adrc_rate_yaw, "RAT_Y_", 3, AC_CustomControl_ADRC, AC_ADRC),
 
     AP_GROUPEND
 };
