@@ -21,13 +21,13 @@ const AP_Param::GroupInfo AC_ADRC::var_info[] = {
     // @DisplayName: ADRC alpha01
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("ALPHA01", 3, AC_ADRC, alpha01, 0.5f),
+    AP_GROUPINFO("ALPHA1", 3, AC_ADRC, alpha01, 0.5f),
 
     // @Param: ALPHA02
     // @DisplayName: ADRC alpha02
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("ALPHA02", 4, AC_ADRC, alpha02, 0.25f),
+    AP_GROUPINFO("ALPHA2", 4, AC_ADRC, alpha02, 0.25f),
 
     // @Param: DELTA
     // @DisplayName: ADRC delta
@@ -83,18 +83,18 @@ const AP_Param::GroupInfo AC_ADRC::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("B0", 11, AC_ADRC, b0, 0.20f),
 
-    // // @Param: H
-    // // @DisplayName: ADRC h
-    // // @Description: ADRC parameter for ADRC custom controller backend
-    // // @User: Advanced
-    // AP_GROUPINFO("H", 12, AC_ADRC, h, 0.0025f),
+    // @Param: H
+    // @DisplayName: ADRC h
+    // @Description: ADRC parameter for ADRC custom controller backend
+    // @User: Advanced
+    AP_GROUPINFO("H", 12, AC_ADRC, h, 0.0025f),
 
     AP_GROUPEND
 };
 
 // Constructor
 AC_ADRC::AC_ADRC(float initial_r, float initial_h0, float initial_alpha01, float initial_alpha02, float initial_delta, float initial_beta01, float initial_beta02, float initial_beta03,
-    float initial_kp, float initial_kd, float initial_b0, float dt)
+    float initial_kp, float initial_kd, float initial_b0, float initial_h)
 {
     // load parameter values from eeprom
     AP_Param::setup_object_defaults(this, var_info);
@@ -109,7 +109,8 @@ AC_ADRC::AC_ADRC(float initial_r, float initial_h0, float initial_alpha01, float
     kp.set_and_default(initial_kp);
     kd.set_and_default(initial_kd);
     b0.set_and_default(initial_b0);
-    h = dt;
+    h.set_and_default(initial_h);
+    // h = dt;
 }
 
 // v:设定值    y:输出值   返回值u:控制量

@@ -14,7 +14,7 @@ public:
 
     // Constructor for ADRC
     AC_ADRC(float initial_r, float initial_h0, float initial_alpha01, float initial_alpha02, float initial_delta, float initial_beta01, float initial_beta02, float initial_beta03,
-    float initial_kp, float initial_kd, float initial_b0, float dt);
+    float initial_kp, float initial_kd, float initial_b0, float initial_h);
 
     CLASS_NO_COPY(AC_ADRC);
 
@@ -46,9 +46,9 @@ protected:
     AP_Float kp;
     AP_Float kd;
     AP_Float b0;
-    // AP_Float h;             // time step
-    
-    float h;                // time step
+    AP_Float h;             // time step
+
+    // float h;                // time step
 
     // internal variables
     float v1 = 0;           // TD跟踪微分器
