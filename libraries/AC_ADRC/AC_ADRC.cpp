@@ -9,19 +9,19 @@ const AP_Param::GroupInfo AC_ADRC::var_info[] = {
     // @DisplayName: ADRC r
     // @Description: TD parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("R", 1, AC_ADRC, r, 100.00f),
+    AP_GROUPINFO("R", 1, AC_ADRC, r, 300.00f),
 
     // @Param: H0
     // @DisplayName: ADRC h0
     // @Description: TD parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("H0", 2, AC_ADRC, h0, 0.0125f),
+    AP_GROUPINFO("H0", 2, AC_ADRC, h0, 0.01f),
 
     // @Param: ALPHA01
     // @DisplayName: ADRC alpha01
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("ALPHA1", 3, AC_ADRC, alpha01, 0.5f),
+    AP_GROUPINFO("ALPHA1", 3, AC_ADRC, alpha01, 0.50f),
 
     // @Param: ALPHA02
     // @DisplayName: ADRC alpha02
@@ -33,7 +33,7 @@ const AP_Param::GroupInfo AC_ADRC::var_info[] = {
     // @DisplayName: ADRC delta
     // @Description: NLSEF parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("DELTA", 5, AC_ADRC, delta, 0.0025f),
+    AP_GROUPINFO("DELTA", 5, AC_ADRC, delta, 20.00f),
 
     // // @Param: WO
     // // @DisplayName: ADRC wo
@@ -51,43 +51,43 @@ const AP_Param::GroupInfo AC_ADRC::var_info[] = {
     // @DisplayName: ADRC beta01
     // @Description: ESO parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("BETA01", 6, AC_ADRC, beta01, 10.00f),
+    AP_GROUPINFO("BETA01", 6, AC_ADRC, beta01, 200.00f),
 
     // @Param: BETA02
     // @DisplayName: ADRC beta02
     // @Description: ESO parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("BETA02", 7, AC_ADRC, beta02, 200.00f),
+    AP_GROUPINFO("BETA02", 7, AC_ADRC, beta02, 2000.00f),
 
     // @Param: BETA03
     // @DisplayName: ADRC beta03
     // @Description: ESO parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("BETA03", 8, AC_ADRC, beta03, 30.00f),
+    AP_GROUPINFO("BETA03", 8, AC_ADRC, beta03, 100.00f),
 
     // @Param: KP
     // @DisplayName: ADRC kp
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("KP", 9, AC_ADRC, kp, 10.00f),
+    AP_GROUPINFO("KP", 9, AC_ADRC, kp, 0.325f),
 
     // @Param: KD
     // @DisplayName: ADRC kd
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("KD", 10, AC_ADRC, kd, 200.00f),
+    AP_GROUPINFO("KD", 10, AC_ADRC, kd, 0.0015f),
 
     // @Param: B0
     // @DisplayName: ADRC b0
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("B0", 11, AC_ADRC, b0, 0.20f),
+    AP_GROUPINFO("B0", 11, AC_ADRC, b0, 5.00f),
 
     // @Param: H
     // @DisplayName: ADRC h
     // @Description: ADRC parameter for ADRC custom controller backend
     // @User: Advanced
-    AP_GROUPINFO("H", 12, AC_ADRC, h, 0.0025f),
+    AP_GROUPINFO("H", 12, AC_ADRC, h, 0.005f),
 
     AP_GROUPEND
 };
