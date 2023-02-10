@@ -655,7 +655,7 @@ private:
     bool set_circle_rate(float rate_dps) override;
 #endif // ENABLE_SCRIPTING
     
-    uint8_t uart_read(uint8_t *data, uint16_t len);
+    uint8_t uart2_read(uint8_t *data, uint16_t len);
     void mavlink_receive_handler(mavlink_message_t MavlinkMsg);
     void mav_send_throw_msg(void);
 

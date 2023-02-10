@@ -90,6 +90,7 @@ const AP_HAL::HAL& hal = AP_HAL::get_HAL();
   and the maximum time they are expected to take (in microseconds)
  */
 const AP_Scheduler::Task Copter::scheduler_tasks[] = {
+    SCHED_TASK(mav_send_throw_msg,  200,   300),
     SCHED_TASK(rc_loop,              100,    130),
     SCHED_TASK(throttle_loop,         50,     75),
     SCHED_TASK_CLASS(AP_GPS, &copter.gps, update, 50, 200),
@@ -205,7 +206,6 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
 #if STATS_ENABLED == ENABLED
     SCHED_TASK_CLASS(AP_Stats,             &copter.g2.stats,            update,           1, 100),
 #endif
-    SCHED_TASK(mav_send_throw_msg,    10,    100),
 };
 
 void Copter::get_scheduler_tasks(const AP_Scheduler::Task *&tasks,
@@ -700,9 +700,9 @@ bool Copter::get_wp_crosstrack_error_m(float &xtrack_error) const
     return true;
 }
 
-uint8_t Copter::uart_read(uint8_t *data, uint16_t len)
+uint8_t Copter::uart2_read(uint8_t *data, uint16_t len)
 {
-    uint16_t i=hal.serial(1)->read(data,len);
+    uint16_t i=hal.serial(2)->read(data,len);
     if(i!=0) {
         return i;
     }
@@ -731,7 +731,7 @@ void Copter::mavlink_receive_handler(mavlink_message_t MavlinkMsg)
 
 void Copter::mav_send_throw_msg(void)
 {
-    hal.serial(2)->begin(57600);
+    hal.serial(2)->begin(115200);
     uint8_t i,t,ret;
     static mavlink_message_t msg;
     static mavlink_status_t  status;
@@ -739,7 +739,7 @@ void Copter::mav_send_throw_msg(void)
     static uint16_t uart_rx_len=36;
 
     // gcs().send_text(MAV_SEVERITY_CRITICAL, "loop begin! %5.3f", (double)3.142f);
-    i=uart_read(uart_rx_data,uart_rx_len); //max length is 14+16=30
+    i=uart2_read(uart_rx_data,uart_rx_len); //max length is 14+16=30
     if(i!=0) {
         for(t=0;t<i;t++) //byte by byte analysis
         {
