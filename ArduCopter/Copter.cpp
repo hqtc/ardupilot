@@ -90,6 +90,7 @@ const AP_HAL::HAL& hal = AP_HAL::get_HAL();
   and the maximum time they are expected to take (in microseconds)
  */
 const AP_Scheduler::Task Copter::scheduler_tasks[] = {
+    SCHED_TASK(mav_send_throw_msg,  200,   300),
     SCHED_TASK(rc_loop,              100,    130),
     SCHED_TASK(throttle_loop,         50,     75),
     SCHED_TASK_CLASS(AP_GPS, &copter.gps, update, 50, 200),
@@ -205,7 +206,6 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
 #if STATS_ENABLED == ENABLED
     SCHED_TASK_CLASS(AP_Stats,             &copter.g2.stats,            update,           1, 100),
 #endif
-    SCHED_TASK(mav_send_throw_msg,    10,    100),
 };
 
 void Copter::get_scheduler_tasks(const AP_Scheduler::Task *&tasks,
@@ -731,7 +731,7 @@ void Copter::mavlink_receive_handler(mavlink_message_t MavlinkMsg)
 
 void Copter::mav_send_throw_msg(void)
 {
-    hal.serial(2)->begin(57600);
+    hal.serial(2)->begin(115200);
     uint8_t i,t,ret;
     static mavlink_message_t msg;
     static mavlink_status_t  status;
